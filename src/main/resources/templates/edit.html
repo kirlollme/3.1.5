@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit User</title>
+</head>
+<body>
+<p th:text="${'Name : ' + user.getName()}">VALUE</p>
+<p th:text="${'Surname: ' + user.getSurname()}">VALUE</p>
+<p th:text="${'Age: ' + user.getAge()}">VALUE</p>
+<p th:text="${'Id: ' +user.getId()}">VALUE</p>
+<br/>
+<form th:method="EDIT" th:action="@{/admin/edit(id=${user.getId()})}" th:object = "${user}">
+
+    <label for="name">Enter username: </label>
+    <input type="text" th:field="*{username}" id="username"/>
+    <div style="color:red" th:if="${#fields.hasErrors('username')}" th:errors="*{username}">Name Error</div>
+
+    <br/>    <label for="name">Enter password: </label>
+    <input type="text" th:field="*{password}" id="password"/>
+    <div style="color:red" th:if="${#fields.hasErrors('password')}" th:errors="*{password}">Name Error</div>
+
+    <br/>
+    <label for="name">Enter name: </label>
+    <input type="text" th:field="*{name}" id="name"/>
+    <div style="color:red" th:if="${#fields.hasErrors('name')}" th:errors="*{name}">Name Error</div>
+
+    <br/>
+
+    <label for="name">Enter Surname: </label>
+    <input type="text" th:field="*{surname}" id="surname"/>
+    <div style="color:red" th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}">Surname Error</div>
+
+    <br/>
+
+    <label for="age">Enter age: </label>
+    <input type="text" th:field="*{age}" id="age"/>
+    <div style="color:red" th:if="${#fields.hasErrors('age')}" th:errors="*{age}">Age Error</div>
+
+    <br/>
+
+    <input type="submit" value="Edit!"/>
+</form>
+<br>
+<div th:replace="logout :: logout"></div>
+</body>
+</html>

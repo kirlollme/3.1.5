@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User</title>
+</head>
+<body>
+<br>
+<p th:text="${'Username : ' + user.getUsername()}">VALUE</p>
+<p th:text="${'Password : ' + user.getPassword()}">VALUE</p>
+
+
+<br>
+<p th:text="${'Name: ' + user.getName()}">VALUE</p>
+<p th:text="${'Surname: ' + user.getSurname()}">VALUE</p>
+<p th:text="${'Age: ' + user.getAge()}">VALUE</p>
+<p th:text="${'Id: ' + user.getId()}">VALUE</p>
+
+<br>
+
+<a th:href="@{edit(id = ${user.getId()})}">Edit</a>
+<hr>
+<form th:method="DELETE" th:action="@{/admin/delete(id=${user.getId()})}">
+    <input type="submit" value="Delete"/>
+</form>
+<div th:replace="logout :: logout"></div>
+</body>
+</html>
