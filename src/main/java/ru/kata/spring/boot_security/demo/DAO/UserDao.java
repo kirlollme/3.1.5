@@ -16,4 +16,5 @@ public interface UserDao extends UserDetailsService {
 
     User getById(Long id);
 
+    User getUserByUsername(String username);
 }

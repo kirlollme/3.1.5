@@ -1,5 +1,9 @@
 package ru.kata.spring.boot_security.demo.model;
 
+
+import lombok.*;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
@@ -9,6 +13,11 @@ import java.util.*;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
+@ToString
+@NoArgsConstructor(access = AccessLevel.PROTECTED) // конструктор без параметров нужен только хибернейту
+@AllArgsConstructor
 public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,50 +27,29 @@ public class User implements UserDetails {
     @Column(name = "surname")
     private String surname;
 
-    @Column(name = "username")
+    @Column(name = "username",unique = true, length = 100)
     @Size(min=2, message = "Не меньше 5 знаков")
     private String username;
 
     @Column(name = "password")
     @Size(min=2, message = "Не меньше 5 знаков")
     private String password;
-
     @Column(name = "age")
     private int age;
     @Column(name = "active")
     private boolean active = true;
 
 
-    @ManyToMany (cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.LAZY, cascade=CascadeType.ALL)
+    @Fetch(FetchMode.JOIN)
     @JoinTable ( name = "users_roles",
-                joinColumns = @JoinColumn(name = "user_id")
-                ,inverseJoinColumns = @JoinColumn(name = "role_id"))
-    private Set<Role> roles;
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    @ToString.Exclude
+    private Set<Role> roles = new HashSet<>();
 
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public void setRoles(Role  role) {
-
-        if (roles == null){
-            roles = new HashSet<>();
-        }
-        this.roles.add(role);
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
 
     public User(String name, String surname, int age) {
         this.age = age;
@@ -77,33 +65,9 @@ public class User implements UserDetails {
 
     }
 
-    public User() {
 
-    }
 
-    public Long getId() {
-        return id;
-    }
 
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getSurname() {
-        return surname;
-    }
-
-    public void setSurname(String surname) {
-        this.surname = surname;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -112,16 +76,6 @@ public class User implements UserDetails {
 
     public Collection<? extends GrantedAuthority> getRoles() {
         return roles;
-    }
-
-    @Override
-    public String getPassword() {
-        return password;
-    }
-
-    @Override
-    public String getUsername() {
-        return username;
     }
 
     @Override
@@ -142,5 +96,8 @@ public class User implements UserDetails {
     @Override
     public boolean isEnabled() {
         return true;
+    }
+    public UserDetails fromUser() {
+        return new org.springframework.security.core.userdetails.User(username, password, getAuthorities());
     }
 }

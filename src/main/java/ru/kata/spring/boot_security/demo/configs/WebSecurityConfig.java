@@ -65,13 +65,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests()
-                .antMatchers( "/registration").permitAll()
-                .antMatchers( "/","/hello").hasRole("USER")
+                .antMatchers( "/").permitAll()
+                .antMatchers( "user").hasRole("USER")
                 .antMatchers("/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .formLogin()
-                .loginPage("/login")
                 .successHandler(successUserHandler)
                 .permitAll()
                 .and()
@@ -80,23 +79,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 // указываем URL логаута
                 .logoutRequestMatcher(new AntPathRequestMatcher("/logout"))
                 // указываем URL при удачном логауте
-                .logoutSuccessUrl("/login?logout");
+                .logoutSuccessUrl("/login");
 
 
     }
 
 
-//    @Override
-//    protected void configure(AuthenticationManagerBuilder auth) throws Exception
-//    {
-//        auth.jdbcAuthentication()
-//                .dataSource(dataSource)
-//                .passwordEncoder(NoOpPasswordEncoder.getInstance())
-//                .usersByUsernameQuery("select username,password,active from users where username=?")
-//                .authoritiesByUsernameQuery("SELECT users.name as username, roles.role as role \n" +
-//                        "        FROM users \n" +
-//                        "        INNER JOIN users_roles ON users.id = users_roles.user_id \n" +
-//                        "        INNER JOIN roles ON users_roles.role_id = roles.id\n" +
-//                        "        WHERE users.name = ?  ");
-//    }
 }

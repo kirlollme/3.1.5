@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.DAO.UserDao;
@@ -14,18 +15,21 @@ import ru.kata.spring.boot_security.demo.model.User;
 import java.util.List;
 @Service
 public class UserServiceImp implements UserService {
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder(12);
+    }
+
     private final UserDao userDao;
     @Autowired
-    public UserServiceImp(UserDao userDao, BCryptPasswordEncoder bCryptPasswordEncoder) {
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    public UserServiceImp(UserDao userDao) {
         this.userDao = userDao;
     }
     @Transactional
     @Override
     public void addUser(User user) {
+        user.setPassword(passwordEncoder().encode(user.getPassword()));
         userDao.addUser(user);
-        user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
     }
 
     @Transactional
@@ -44,13 +48,17 @@ public class UserServiceImp implements UserService {
     @Transactional
     @Override
     public void changeDataUser(Long id, User userAfter) {
-        userAfter.setPassword(bCryptPasswordEncoder.encode(userAfter.getPassword()));
         userDao.changeDataUser(id,userAfter);
     }
 
     @Override
     public User getById(Long id) {
         return userDao.getById(id);
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        return userDao.getUserByUsername(username);
     }
 
 

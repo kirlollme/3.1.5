@@ -13,8 +13,9 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 
+import java.util.HashSet;
 import java.util.List;
-
+import java.util.Set;
 
 
 @Repository
@@ -26,8 +27,9 @@ public class UserDaoImp implements UserDao {
     @Override
     @Transactional
     public void addUser(User user) {
-
-        user.setRoles(new Role("ROLE_USER"));
+//        Set<Role> role= new HashSet<>();
+//        role.add(new Role("ROLE_USER"));
+//        user.setRoles(role);
         entityManager.persist(user);
 
     }
@@ -60,6 +62,14 @@ public class UserDaoImp implements UserDao {
         String hql = "from User WHERE id = :id";
         Query query = (Query) entityManager.createQuery(hql);
         query.setParameter("id", id);
+        return (User) query.uniqueResult();
+    }
+
+    @Override
+    public User getUserByUsername(String username) {
+        String hql = "from User WHERE username = :username";
+        Query query = (Query) entityManager.createQuery(hql);
+        query.setParameter("username", username);
         return (User) query.uniqueResult();
     }
 
